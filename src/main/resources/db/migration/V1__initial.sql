@@ -1,6 +1,7 @@
-CREATE TABLE BUDGET_ITEM_ENTITY
+CREATE TABLE BUDGET_ITEM
 (
     id    UUID NOT NULL,
     name  varchar(256),
-    value bigint
+    value bigint,
+    category varchar(256)
 );
