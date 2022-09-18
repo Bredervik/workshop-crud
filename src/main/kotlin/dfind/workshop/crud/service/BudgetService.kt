@@ -2,6 +2,8 @@ package dfind.workshop.crud.service
 
 import dfind.workshop.crud.domain.BudgetCategory
 import dfind.workshop.crud.domain.BudgetItem
+import dfind.workshop.crud.domain.InvalidArgumentException
+import dfind.workshop.crud.domain.NotFoundException
 import dfind.workshop.crud.repository.BudgetItemRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -29,7 +31,7 @@ class BudgetService {
 
         existingItem?.let {
             return budgetItemRepository.save(it.copy(name = budgetItemUpdate.name, value = budgetItemUpdate.value))
-        } ?: throw Exception("Finn rett 404 exception")
+        } ?: throw NoSuchElementException("Could not find budget item with id: $id")
     }
 
     fun deleteItem(id: UUID) {
@@ -38,9 +40,8 @@ class BudgetService {
 
     private fun validateBudgetItem(budgetItem: BudgetItem) {
         when {
-            budgetItem.category == BudgetCategory.INCOME && budgetItem.value < BigInteger.ZERO -> throw java.lang.IllegalArgumentException("Income cannot be negative")
-            budgetItem.category != BudgetCategory.INCOME && budgetItem.value > BigInteger.ZERO -> throw java.lang.IllegalArgumentException("Expenses cannot be positive")
+            budgetItem.category == BudgetCategory.INCOME && budgetItem.value < BigInteger.ZERO -> throw IllegalArgumentException("Income cannot be negative")
+            budgetItem.category != BudgetCategory.INCOME && budgetItem.value > BigInteger.ZERO -> throw IllegalArgumentException("Expenses cannot be positive")
         }
     }
-    // Må finne en rettere måte å kaste exceptions på, spring har sikkert noe innebygd
 }
